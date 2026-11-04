@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>triangulate: where was this recorded?</title>
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="16" r="5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M16 1v8M16 23v8M1 16h8M23 16h8" stroke="currentColor" stroke-width="1.5"/></svg>
+    <h1>triangulate</h1>
+    <span class="tag">locate a recording from the aircraft you can hear in it</span>
+  </div>
+  <p id="use-notice" class="notice" role="note">Loading notice...</p>
+</header>
+<div class="shell">
+  <nav class="rail" aria-label="Analyses">
+    <a class="btn primary" href="#/new" id="new-link">New analysis</a>
+    <h2 class="rail-h">Analyses</h2>
+    <ul id="job-list" class="jobs" aria-live="polite"></ul>
+    <p id="job-empty" class="muted" hidden>No analyses yet. Upload a recording to start one.</p>
+  </nav>
+  <main id="main" tabindex="-1"></main>
+</div>
+<footer class="foot">
+  <ul id="attribution" class="attrib"></ul>
+  <p id="net-note" class="muted"></p>
+</footer>
+<script src="vendor/leaflet/leaflet.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
