@@ -1,0 +1,38 @@
+{
+ "_note": "Synthetic fixture in the exact Messages API response shape (validated against anthropic 1.8.0 types); no API key was available to record live.",
+ "response": {
+  "id": "msg_fixture_claude-opus-5-5",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-opus-5-5",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": "",
+    "signature": "sig-redacted"
+   },
+   {
+    "type": "text",
+    "text": "{\"clues\": [{\"type\": \"signage_text\", \"value\": \"RUE DE LA PAIX\", \"evidence\": [{\"frame_id\": \"f0001\", \"bbox\": {\"x0\": 0.2, \"y0\": 0.3, \"x1\": 0.8, \"y1\": 0.55}}], \"implication\": {\"countries\": [{\"code\": \"FR\", \"p\": 0.8}, {\"code\": \"BE\", \"p\": 0.1}], \"admin1\": [{\"country\": \"FR\", \"name\": \"Ile-de-France\", \"p\": 0.3}], \"koppen\": [\"Cfb\"], \"driving_side\": \"right\"}, \"osm_hints\": [{\"tags\": [{\"key\": \"highway\", \"op\": \"exists\", \"value\": \"\"}, {\"key\": \"name\", \"op\": \"=\", \"value\": \"Rue de la Paix\"}], \"note\": \"street\"}], \"place_candidates\": [\"Rue de la Paix, Paris\"], \"geocode_queries\": [\"Rue de la Paix, France\"], \"confidence\": 0.85, \"rationale\": \"French street-name format on a Paris-style blue enamel plaque.\"}, {\"type\":"
+   }
+  ],
+  "stop_reason": "max_tokens",
+  "stop_sequence": null,
+  "usage": {
+   "input_tokens": 9100,
+   "output_tokens": 16000,
+   "cache_read_input_tokens": 0,
+   "cache_creation_input_tokens": 0,
+   "iterations": [
+    {
+     "type": "message",
+     "model": "claude-opus-5-5",
+     "input_tokens": 9100,
+     "output_tokens": 16000,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 0
+    }
+   ]
+  }
+ }
+}

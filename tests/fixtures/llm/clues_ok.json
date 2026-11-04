@@ -1,0 +1,38 @@
+{
+ "_note": "Synthetic fixture in the exact Messages API response shape (validated against anthropic 1.8.0 types); no API key was available to record live.",
+ "response": {
+  "id": "msg_fixture_claude-opus-5-5",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-opus-5-5",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": "",
+    "signature": "sig-redacted"
+   },
+   {
+    "type": "text",
+    "text": "{\"clues\": [{\"type\": \"signage_text\", \"value\": \"RUE DE LA PAIX\", \"evidence\": [{\"frame_id\": \"f0001\", \"bbox\": {\"x0\": 0.2, \"y0\": 0.3, \"x1\": 0.8, \"y1\": 0.55}}], \"implication\": {\"countries\": [{\"code\": \"FR\", \"p\": 0.8}, {\"code\": \"BE\", \"p\": 0.1}], \"admin1\": [{\"country\": \"FR\", \"name\": \"Ile-de-France\", \"p\": 0.3}], \"koppen\": [\"Cfb\"], \"driving_side\": \"right\"}, \"osm_hints\": [{\"tags\": [{\"key\": \"highway\", \"op\": \"exists\", \"value\": \"\"}, {\"key\": \"name\", \"op\": \"=\", \"value\": \"Rue de la Paix\"}], \"note\": \"street\"}], \"place_candidates\": [\"Rue de la Paix, Paris\"], \"geocode_queries\": [\"Rue de la Paix, France\"], \"confidence\": 0.85, \"rationale\": \"French street-name format on a Paris-style blue enamel plaque.\"}, {\"type\": \"language_script\", \"value\": \"French, Latin script\", \"evidence\": [{\"frame_id\": \"f0001\"}], \"implication\": {\"countries\": [{\"code\": \"FR\", \"p\": 0.7}, {\"code\": \"BE\", \"p\": 0.1}, {\"code\": \"CH\", \"p\": 0.1}, {\"code\": \"CA\", \"p\": 0.05}]}, \"confidence\": 0.7, \"rationale\": \"Text is French.\"}, {\"type\": \"plate_format\", \"value\": \"AB-123-CD\", \"evidence\": [{\"frame_id\": \"f0002\"}], \"implication\": {\"countries\": [{\"code\": \"FR\", \"p\": 0.6}]}, \"confidence\": 0.5, \"rationale\": \"SIV format plate\"}, {\"type\": \"vegetation_biome\", \"value\": \"palm trees\", \"evidence\": [{\"frame_id\": \"f0002\"}, {\"frame_id\": \"f0099\"}], \"implication\": {\"countries\": [{\"code\": \"FR\", \"p\": 0.4}, {\"code\": \"ES\", \"p\": 0.3}], \"koppen\": [\"Csa\", \"not-a-code\"]}, \"osm_hints\": [{\"tags\": [{\"key\": \"natural\", \"op\": \"=\", \"value\": \"tree\"}, {\"key\": \"genus\", \"op\": \"=\", \"value\": \"Phoenix\"}]}], \"confidence\": 0.4, \"rationale\": \"Mediterranean coast vegetation\"}, {\"type\": \"person_identity\", \"value\": \"someone\", \"confidence\": 0.9}], \"region_hypotheses\": [{\"name\": \"French Riviera\", \"country\": \"fr\", \"admin1\": \"Provence-Alpes-Cote d'Azur\", \"p\": 0.45}, {\"name\": \"Paris\", \"country\": \"FR\", \"admin1\": \"Ile-de-France\", \"p\": 0.35}], \"searchable_entities\": [{\"name\": \"Rue de la Paix\", \"kind\": \"street\", \"query\": \"Rue de la Paix, Nice, France\", \"frame_ids\": [\"f0001\"], \"confidence\": 0.6}], \"summary\": \"French street sign and palm trees suggest southern France.\"}"
+   }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+   "input_tokens": 9100,
+   "output_tokens": 2600,
+   "cache_read_input_tokens": 0,
+   "cache_creation_input_tokens": 0,
+   "iterations": [
+    {
+     "type": "message",
+     "model": "claude-opus-5-5",
+     "input_tokens": 9100,
+     "output_tokens": 2600,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 0
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,28 @@
+{
+ "_note": "Synthetic fixture in the exact Messages API response shape (validated against anthropic 1.8.0 types); no API key was available to record live.",
+ "response": {
+  "id": "msg_fixture_claude-haiku-5-5",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-haiku-5-5",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": "",
+    "signature": "sig-redacted"
+   },
+   {
+    "type": "text",
+    "text": "{\"frames\": [{\"frame_id\": \"f0001\", \"score\": 0.92, \"flags\": [\"text\", \"signage\", \"architecture\"], \"note\": \"Blue enamel street sign reading RUE DE LA PAIX\"}, {\"frame_id\": \"f0002\", \"score\": 0.71, \"flags\": [\"vegetation\", \"road_markings\"], \"note\": \"Car on a street lined with palm trees\"}, {\"frame_id\": \"f0003\", \"score\": 0.08, \"flags\": [\"sky_only\"], \"note\": \"Sky\"}, {\"frame_id\": \"f9999\", \"score\": 1.0, \"flags\": [\"landmark\"], \"note\": \"not a real frame\"}]}"
+   }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+   "input_tokens": 3720,
+   "output_tokens": 410,
+   "cache_read_input_tokens": 0,
+   "cache_creation_input_tokens": 820
+  }
+ }
+}

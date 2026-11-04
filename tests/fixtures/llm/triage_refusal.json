@@ -1,0 +1,23 @@
+{
+ "_note": "Synthetic fixture in the exact Messages API response shape (validated against anthropic 1.8.0 types); no API key was available to record live.",
+ "response": {
+  "id": "msg_fixture_claude-haiku-5-5",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-haiku-5-5",
+  "content": [],
+  "stop_reason": "refusal",
+  "stop_sequence": null,
+  "usage": {
+   "input_tokens": 3720,
+   "output_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation_input_tokens": 0
+  },
+  "stop_details": {
+   "type": "refusal",
+   "category": "general_harms",
+   "explanation": null
+  }
+ }
+}
