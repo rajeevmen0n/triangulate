@@ -55,7 +55,7 @@ def test_index_served_and_assets_resolve(client):
         base = PurePosixPath(url).parent
         if url.endswith(".js"):  # relative ES module imports
             for m in re.findall(r"""from\s+["'](\.[^"']+)["']""", a.text):
-                todo.append(str((base / m)).replace("//", "/"))
+                todo.append(str(base / m).replace("//", "/"))
         if url.endswith(".css"):
             for m in re.findall(r"url\(['\"]?([^)'\"]+)", a.text):
                 if not m.startswith(("data:", "http", "#")):
@@ -73,6 +73,7 @@ def test_page_has_notice_and_attribution_hooks(client):
 def test_no_external_urls_in_static(client):
     from triangulate.api.app import STATIC_DIR
 
+    own_js = {"app.js", "job.js", "form.js", "results.js", "evidence.js", "map.js", "util.js"}
     for f in STATIC_DIR.rglob("*"):
-        if f.is_file() and f.suffix in {".html", ".css"} or f.name in {"app.js", "job.js", "form.js", "results.js", "evidence.js", "map.js", "util.js"}:
+        if f.is_file() and (f.suffix in {".html", ".css"} or f.name in own_js):
             assert not re.search(r"""(src|href)=["']https?://""", f.read_text()), f
