@@ -8,7 +8,7 @@ export function el(tag, attrs = {}, ...kids) {
     else if (k === "text") n.textContent = v;
     else n.setAttribute(k, v === true ? "" : v);
   }
-  for (const c of kids.flat()) if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+  for (const c of kids.flat(Infinity)) if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c)));
   return n;
 }
 export function svg(tag, attrs = {}, ...kids) {

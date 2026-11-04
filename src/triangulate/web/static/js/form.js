@@ -46,7 +46,7 @@ export function newAnalysis(root, state, onCreated) {
     if (rect) rect.setBounds(b); else rect = L.rectangle(b, { color: "#0b5a8c", weight: 2, fillOpacity: 0.08 }).addTo(map);
   };
   const readBox = () => ["s", "w", "n", "e"].map((k) => parseFloat(bb[k].value));
-  const fromInputs = () => { const v = readBox(); if (v.every(Number.isFinite) && v[0] < v[2] && v[1] < v[3]) setRect(...v); };
+  const fromInputs = () => { const v = readBox(); if (v.every(Number.isFinite) && v[0] < v[2] && v[1] < v[3]) { setRect(...v); if (!drawing) map.fitBounds([[v[0], v[1]], [v[2], v[3]]], { padding: [20, 20], animate: false }); } };
   const fill = (s, w, n, e) => { [s, w, n, e].forEach((v, i) => (bb["swne"[i]].value = (+v).toFixed(5))); fromInputs(); };
   Object.values(bb).forEach((i) => i.addEventListener("input", fromInputs));
   const drawBtn = el("button", { type: "button", class: "btn", "aria-pressed": "false" }, "Draw box on map");

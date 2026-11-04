@@ -13,22 +13,22 @@
           # All Python deps come from nixpkgs (never pip/uv). To add one, add it to this list.
           # For a library missing from nixpkgs, define it with ps.buildPythonPackage
           # (fetchPypi) in nix/python.nix and `git add` that file (flakes only see tracked files).
-          pythonEnv = pkgs.python3.withPackages (ps: with ps; [
+          pyPkgs = ps: with ps; [
             numpy scipy numba polars pyarrow duckdb orjson
             rasterio pyproj shapely h3 timezonefinder pvlib
             fastapi uvicorn python-multipart sse-starlette pydantic pydantic-settings python-dotenv httpx jinja2
             anthropic
             pillow opencv4 tesserocr soundfile matplotlib
             pytest pytest-asyncio hypothesis
-          ]);
-        in {
-          default = pkgs.mkShell {
-            packages = [
-              pythonEnv
-              pkgs.tesseract pkgs.ffmpeg pkgs.exiftool pkgs.ruff pkgs.mypy
-              pkgs.git pkgs.yt-dlp pkgs.nodejs
-            ];
-            shellHook = ''
+          ];
+          pythonEnv = pkgs.python3.withPackages pyPkgs;
+          # Separate env for the real-browser UI check only (`nix develop .#browser`).
+          pythonBrowserEnv = pkgs.python3.withPackages (ps: pyPkgs ps ++ [ ps.playwright ]);
+          tools = [
+            pkgs.tesseract pkgs.ffmpeg pkgs.exiftool pkgs.ruff pkgs.mypy
+            pkgs.git pkgs.yt-dlp pkgs.nodejs
+          ];
+          baseHook = ''
               export PROJECT_ROOT="$PWD"
               export DEVHOME="$PROJECT_ROOT/.devhome"
               mkdir -p "$DEVHOME"/{home,config,cache,data,state,tmp}
@@ -51,6 +51,18 @@
               export WATCH_DETAIL=balanced
               export WATCH_WHISPER_BACKEND=none
               export WATCH_SKILL_DIR=/home/rajeev/.claude/plugins/synced/24ce0485-e119-470e-8f03-afb9708098ed_b76f3290-3ce1-437e-bbdc-4dd6f15d7160/watch/skills/watch
+            '';
+        in {
+          default = pkgs.mkShell {
+            packages = [ pythonEnv ] ++ tools;
+            shellHook = baseHook;
+          };
+          browser = pkgs.mkShell {
+            packages = [ pythonBrowserEnv ] ++ tools;
+            shellHook = baseHook + ''
+              export PLAYWRIGHT_BROWSERS_PATH="${pkgs.playwright-driver.browsers}"
+              export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
+              export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
             '';
           };
         });

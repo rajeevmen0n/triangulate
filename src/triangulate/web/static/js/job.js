@@ -50,6 +50,7 @@ export async function showJob(root, id, state) {
       el("p", {}, el("strong", {}, j.status), j.error ? el("span", { class: "err", role: "alert", style: "margin-left:10px" }, j.error.split("\n").pop()) : null));
   }
   paintHead(job);
+  const liveStatus = (st) => { const e = head.querySelector("strong"); if (e) e.textContent = st; };
 
   async function finish() {
     if (es) { es.close(); es = null; }
@@ -73,6 +74,7 @@ export async function showJob(root, id, state) {
       if (my !== token) return;
       const d = JSON.parse(ev.data);
       setProgress(d.progress ?? 0, d.stage, d.message, "running");
+      liveStatus("running");
       if (d.stage !== lastStage || ev.type === "error") {
         lastStage = d.stage;
         log.append(el("li", { class: ev.type }, `${STAGE_LABEL[d.stage] || d.stage}: ${d.message}`));

@@ -47,4 +47,12 @@ Written by the real stages into `data/jobs/<id>/`, served via `/api/jobs/{id}/ar
 
 ## Unverified
 - [ ] WP15 has never called the real Claude API (no key). Run the `llm`-marked test once `ANTHROPIC_API_KEY` is set. The visual-layer and sun-rerank branches of the fusion stage are untested end to end for the same reason.
-- [ ] WP21 JS has not been exercised in a real browser (WP25 only checked the artifacts over HTTP).
+- [x] WP21 JS exercised in headless Chromium (`nix develop .#browser --command python -m pytest -m browser tests/browser -s`): full upload → SSE → results flow, 0 console/page errors, 0 external requests. Fixed: results never rendered (fitBounds on a detached map → NaN LatLng), nested-array flattening in `el()`, a literal "null" in the detail card, status stuck at "queued", typed bbox not shown on the pick-map, form grid alignment.
+
+## UI follow-ups (from the browser check)
+- [ ] Results map fits the whole search bbox, so the posterior (50 % region ≈ 0.01 km²) is a dot. Fit to the 90 % HPD (with a minimum extent) and stretch the heatmap.
+- [ ] Copernicus attribution appears twice in the results "Data and attribution" card (once from results.json and once from config).
+- [ ] Candidate "probability" is mass within 300 m, so overlapping candidates sum past 100 % (100 %, 49 %, 36 % …). Label it as "mass within 300 m" or de-overlap.
+- [ ] Events table and edit-events table list all 35 detected events. Collapse non-aircraft/flagged ones by default.
+- [ ] Sidebar job list polls every 4 s and lags the main panel ("queued" while done).
+- [ ] Time zone field is slightly out of line when its hint wraps.

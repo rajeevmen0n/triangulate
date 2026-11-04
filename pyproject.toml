@@ -9,6 +9,7 @@ markers = [
   "slow: long-running",
   "acceptance: Oyster Bay acceptance tests",
   "llm: needs ANTHROPIC_API_KEY (skipped without a key)",
+  "browser: real-browser UI check (nix develop .#browser; run with -m browser)",
 ]
 
 [tool.ruff]

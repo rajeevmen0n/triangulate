@@ -71,7 +71,6 @@ export async function renderResults(root, job, state, onRerun) {
       el("td", {}, el("div", { class: "row" }, pick, cp))));
   });
   const fit = bbox ? [[bbox[0], bbox[1]], [bbox[2], bbox[3]]] : hm?.leaflet_bounds;
-  if (fit) map.fitBounds(fit, { padding: [20, 20] });
 
   const opacity = el("input", { type: "range", min: 0, max: 100, value: 70, id: "op", "aria-label": "Heatmap opacity", oninput: (e) => overlay?.setOpacity(e.target.value / 100) });
   const toggleHpd = el("input", { type: "checkbox", id: "hpd", checked: true, onchange: (e) => (e.target.checked ? layerGroup.addTo(map) : map.removeLayer(layerGroup)) });
@@ -82,7 +81,7 @@ export async function renderResults(root, job, state, onRerun) {
 
   function drawDetail(c) {
     const contribs = Object.entries(c.contributions || {});
-    detail.replaceChildren(el("h3", {}, `Candidate ${c.rank}`),
+    detail.replaceChildren(...[el("h3", {}, `Candidate ${c.rank}`),
       el("dl", { class: "kv" },
         el("dt", {}, "Coordinates"), el("dd", {}, el("span", { class: "coord" }, coordText(c.lat, c.lon)), " ", el("button", { type: "button", class: "btn small", onclick: (e) => copy(coordText(c.lat, c.lon), e.currentTarget) }, "Copy")),
         el("dt", {}, "Probability mass"), el("dd", {}, pct(c.prob_mass)),
@@ -93,7 +92,7 @@ export async function renderResults(root, job, state, onRerun) {
         el("dt", {}, "Flights"), el("dd", {}, c.flights?.length ? el("span", { class: "chips" }, c.flights.map((f) => el("span", { class: "chip" }, flightInfo[f]?.reg ? `${f} (${flightInfo[f].reg}${flightInfo[f].typecode ? ", " + flightInfo[f].typecode : ""})` : f))) : "none matched")),
       contribs.length ? el("table", {}, el("caption", { class: "small muted", style: "text-align:left" }, "Evidence by module (weighted log-likelihood)"),
         el("tbody", {}, contribs.map(([k, v]) => el("tr", {}, el("td", {}, k), el("td", { class: "r num" }, fmt(v, 2)))))) : null,
-      c.notes?.length ? el("ul", {}, c.notes.map((n) => el("li", {}, String(n)))) : null);
+      c.notes?.length ? el("ul", {}, c.notes.map((n) => el("li", {}, String(n)))) : null].filter(Boolean));
   }
 
   const ledger = el("div", { class: "card" }, el("h3", {}, "Ranked candidates"),
@@ -138,5 +137,7 @@ export async function renderResults(root, job, state, onRerun) {
     ev, ...extras.map((x) => el("div", { style: "margin-top:16px" }, x)),
     el("div", { class: "card", style: "margin-top:16px" }, el("h3", {}, "Data and attribution"), el("ul", {}, attribution.map((a) => el("li", {}, a))), dl));
   map.invalidateSize();
+  // fit only once the map div is in the DOM: on a detached (0x0) container Leaflet computes a NaN centre
+  if (fit) map.fitBounds(fit, { padding: [20, 20] });
   if (cands.length) select(0, false);
 }
