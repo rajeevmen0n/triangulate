@@ -24,6 +24,9 @@ The UI reads these artifacts from `data/jobs/<id>/` via `/api/jobs/{id}/artifact
 - WP03: `TRACK_SCHEMA` has no callsign; the UI's "flight IDs" show ICAO hex unless a callsign column is added.
 - WP03: the ICAO type table is a bundled, model-transcribed Doc 8643 subset (the tar1090-db licence is unclear). Spot-check it.
 
+- WP10: the silence filter's "full" scope ([0, duration]) rejects every Oyster Bay hypothesis, because other audible aircraft have no exemptions. The default "between" scope works (204 cells, ground truth kept). Revisit "full" once WP08's detected-event list can feed `exempt_events`. Single-event recordings need `scope="full"`.
+- WP10 real data: implied audio.mp3 start = 20:17:34.5Z (confirms the WP07 estimate).
+
 ## Unverified
 - WP15 has never called the real Claude API (no key). Run the `llm`-marked test once `ANTHROPIC_API_KEY` is set.
 - WP21 JS has not been exercised in a real browser.
