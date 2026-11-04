@@ -42,6 +42,7 @@ from ..core.types import Event, ModuleResult
 from ..fusion.combine import acoustic_layer
 from ..fusion.grid import GridSpec, Layer, cell_centers_latlon, latlon_to_cells, pack_cells, unpack_cells
 from .calibrate import LAMBDA_DEFAULT, P_MISS_DEFAULT, Calibration, calibrate
+from .calibration_defaults import LAMBDA_FIT
 from .cpa import V_MARGIN_MS, CpaResult, EventGate, compute_cpa, cpa_search, track_segments
 from .detect import BAD_FLAGS
 from .grid import SEARCH_LEVEL, CellSet, GroundFn, default_ground_hae, densify, observer_cells
@@ -76,7 +77,7 @@ class SearchConfig:
     top_tuples: tuple[int, ...] = (50, 20, 10)
     keep_cells: int = 32
     keep_dz: float = 10.0
-    lam: float = LAMBDA_DEFAULT
+    lam: float = LAMBDA_FIT  # WP22 fit (90 % HPD coverage over 40 synthetic seeds); was 0.5
     p_miss: float = P_MISS_DEFAULT
     calib_hyps: int = 400
     score: ScoreConfig = field(default_factory=ScoreConfig)
