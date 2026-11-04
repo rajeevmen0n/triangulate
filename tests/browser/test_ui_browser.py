@@ -82,7 +82,7 @@ def test_full_flow(server):
             page.wait_for_selector("form")
             page.wait_for_function("document.getElementById('use-notice').textContent.length > 30")
             page.set_input_files("#file", str(AUDIO))
-            for k, v in zip("swne", ("40.50", "-74.00", "41.20", "-73.00")):
+            for k, v in zip("swne", ("40.50", "-74.00", "41.20", "-73.00"), strict=True):
                 page.fill(f"#bb-{k}", v)
             page.fill("#d0", "2026-09-08")
             page.fill("#tw0", "15:30")
@@ -129,7 +129,8 @@ def test_full_flow(server):
             print(f"top candidate {m[0]} is {d:.0f} m from truth")
             assert d < 500
             assert page.query_selector_all(".spec svg polyline"), "no fitted curves on spectrogram"
-            assert page.query_selector_all("text=Detected events") or "Detected events" in page.inner_text("main")
+            main_text = page.inner_text("main")
+            assert page.query_selector_all("text=Detected events") or "Detected events" in main_text
             body = page.inner_text("body")
             assert "Modules:" in body
             assert "Data and attribution" in body and "adsb.lol" in body
