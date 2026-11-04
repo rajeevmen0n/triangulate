@@ -86,12 +86,17 @@ def _cmd_run(args: argparse.Namespace) -> int:
     return 0 if job["status"] == "done" else 1
 
 
-def _not_yet(name: str, wp: str):
-    def run(args: argparse.Namespace) -> int:
-        print(f"`{name}` is not implemented yet ({wp}).", file=sys.stderr)
-        return 2
+def _cmd_serve(args: argparse.Namespace) -> int:
+    import uvicorn
 
-    return run
+    from .api import create_app
+
+    s = get_settings()
+    host, port = args.host or s.host, args.port or s.port
+    if host not in ("127.0.0.1", "localhost", "::1"):
+        print(f"WARNING: {host} exposes this unauthenticated API beyond this machine.", file=sys.stderr)
+    uvicorn.run(create_app(s), host=host, port=port, log_level="info")
+    return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -114,9 +119,10 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--events", help="events.json to use instead of auto-detection")
     run.set_defaults(func=_cmd_run)
 
-    sub.add_parser("serve", help="start the web UI/API (WP19)").set_defaults(
-        func=_not_yet("serve", "WP19")
-    )
+    sv = sub.add_parser("serve", help="start the web UI/API (binds to 127.0.0.1 by default)")
+    sv.add_argument("--host", help="bind address (default: settings.host, 127.0.0.1)")
+    sv.add_argument("--port", type=int, help="port (default: settings.port, 8000)")
+    sv.set_defaults(func=_cmd_serve)
     return p
 
 
