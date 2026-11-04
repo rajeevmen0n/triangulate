@@ -86,6 +86,21 @@ def _cmd_run(args: argparse.Namespace) -> int:
     return 0 if job["status"] == "done" else 1
 
 
+def _cmd_purge(args: argparse.Namespace) -> int:
+    """Delete job workspaces and upload staging older than the retention period (WP24)."""
+    from .jobs.retention import purge_expired
+    from .jobs.runner import make_store
+
+    if args.days is not None and args.days < 1:
+        print("error: --days must be at least 1 (use TRIANGULATE_RETENTION_DAYS=0 to disable the purge)",
+              file=sys.stderr)
+        return 2
+    s = get_settings()
+    report = purge_expired(s, make_store(s), args.days, dry_run=args.dry_run)
+    print(json.dumps(report, indent=2, default=str))
+    return 1 if report["errors"] else 0
+
+
 def _cmd_serve(args: argparse.Namespace) -> int:
     import uvicorn
 
@@ -118,6 +133,11 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--quiet", action="store_true", help="no progress on stderr")
     run.add_argument("--events", help="events.json to use instead of auto-detection")
     run.set_defaults(func=_cmd_run)
+
+    pg = sub.add_parser("purge", help="delete job data older than the retention period")
+    pg.add_argument("--days", type=float, help="override TRIANGULATE_RETENTION_DAYS (>= 1)")
+    pg.add_argument("--dry-run", action="store_true", help="report what would be deleted")
+    pg.set_defaults(func=_cmd_purge)
 
     sv = sub.add_parser("serve", help="start the web UI/API (binds to 127.0.0.1 by default)")
     sv.add_argument("--host", help="bind address (default: settings.host, 127.0.0.1)")

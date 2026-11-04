@@ -7,6 +7,7 @@ import json
 import re
 import shutil
 import tempfile
+import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -22,6 +23,7 @@ from .. import __version__
 from ..config import Settings, get_settings
 from ..jobs import store as S
 from ..jobs.pipeline import JobParams, Stage, workspace
+from ..jobs.retention import DAY, purge_expired
 from ..jobs.runner import JobRunner, create_job, make_store
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "web" / "static"
@@ -31,16 +33,21 @@ END_STATES = S.TERMINAL | {S.INTERRUPTED}
 
 VISUAL_NOTICE = (
     "If you enable the visual module, selected video frames and OCR text are sent to the Claude API "
-    "(Anthropic). No audio is sent. This needs your explicit consent for each upload."
+    "(Anthropic). No audio is sent. This needs your explicit consent for each upload. Spending is capped "
+    "per job."
 )
 ATTRIBUTION = [
-    "Flight data © adsb.lol contributors (ODbL)",
-    "Contains Copernicus DEM data (GLO-30) © DLR e.V. / Airbus / ESA",
-    "© OpenStreetMap contributors (ODbL)",
+    "Flight data © adsb.lol contributors (ODbL 1.0)",
+    "© OpenStreetMap contributors (ODbL 1.0)",
+    "Contains Copernicus DEM (GLO-30) © DLR e.V. 2020 and © Airbus Defence and Space GmbH 2020, "
+    "provided under COPERNICUS by the European Union and ESA; all rights reserved",
+    "Map: Leaflet 1.9.4 © Vladimir Agafonkin and contributors (BSD 2-Clause)",
+    "Aircraft type designators: ICAO Doc 8643 (bundled subset; not a copy of third-party data)",
 ]
 USE_NOTICE = (
-    "For OSINT verification, journalism, research and checking your own recordings. "
-    "Not a tool for locating private individuals. Results are probabilistic: read the uncertainty region."
+    "For OSINT verification, journalism, research and checking your own recordings. Not a tool for "
+    "locating private individuals. One file per job; no bulk or automated use. Results are probabilistic: "
+    "read the uncertainty region, not the pin."
 )
 
 
@@ -94,7 +101,16 @@ def create_app(
     s = settings or get_settings()
     s.ensure_dirs()
     store = make_store(s)
+    purge_expired(s, store)  # retention on startup (WP24); queued/running jobs are never purged
     runner = JobRunner(store, s, stages)
+
+    def check_rate_limit() -> None:
+        """At most `max_jobs_per_day` new jobs per rolling 24 h (0 disables). Covers uploads and reruns."""
+        if s.max_jobs_per_day > 0 and store.count_since(time.time() - DAY) >= s.max_jobs_per_day:
+            raise HTTPException(
+                429, f"rate limit: at most {s.max_jobs_per_day} jobs per 24 hours "
+                "(TRIANGULATE_MAX_JOBS_PER_DAY)"
+            )
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -152,6 +168,7 @@ def create_app(
             "llm_enabled": s.llm_enabled, "visual_notice": VISUAL_NOTICE, "use_notice": USE_NOTICE,
             "attribution": ATTRIBUTION, "max_upload_bytes": s.max_upload_bytes,
             "llm_budget_usd": s.llm_budget_usd, "default_h_obs_m": s.h_obs_m,
+            "retention_days": s.retention_days, "max_jobs_per_day": s.max_jobs_per_day,
         }
 
     # -- jobs
@@ -169,6 +186,7 @@ def create_app(
         events: str | None = Form(None),
         weights: str | None = Form(None),
     ) -> dict[str, Any]:
+        check_rate_limit()
         cl = request.headers.get("content-length")
         if cl and cl.isdigit() and int(cl) > s.max_upload_bytes + 1_000_000:
             raise HTTPException(413, f"upload exceeds limit of {s.max_upload_bytes} bytes")
@@ -222,6 +240,7 @@ def create_app(
         src = workspace(s, job_id) / params.input_name
         if not src.is_file():
             raise HTTPException(410, "original input is no longer available")
+        check_rate_limit()
         jid = create_job(store, s, params, src)  # stage cache is reused where inputs are unchanged
         runner.submit(jid)
         return view(store.get(jid))  # type: ignore[arg-type]
@@ -243,7 +262,10 @@ def create_app(
         p = Path(j["result_path"])
         if not p.is_file():
             raise HTTPException(404, "result file missing")
-        return JSONResponse(json.loads(p.read_text()))
+        data = json.loads(p.read_text())
+        if isinstance(data, dict):  # exports carry the attribution wherever results are shown (plan 7)
+            data.setdefault("attribution", ATTRIBUTION)
+        return JSONResponse(data)
 
     @app.get("/api/jobs/{job_id}/artifacts/{name:path}")
     def artifact(job_id: str, name: str) -> FileResponse:

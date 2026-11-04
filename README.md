@@ -5,6 +5,7 @@ ADS-B tracks (acoustic), frame clues (visual, opt-in, Claude API) and untrusted 
 v1 is region search: a region (bbox) and a date are required. Full design: `docs/plan.md`.
 
 For OSINT verification, journalism and research; not for locating private individuals.
+See `RESPONSIBLE_USE.md` for the use policy, attribution, retention (`triangulate purge`) and rate limits.
 
 ## Dev shell and tests
 

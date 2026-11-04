@@ -74,6 +74,10 @@ class JobStore:
             rows = self._exec("SELECT * FROM jobs ORDER BY created")
         return [self._job(r) for r in rows]
 
+    def count_since(self, since: float) -> int:
+        """Number of jobs created at or after `since` (epoch seconds); used for the per-day rate limit."""
+        return int(self._exec("SELECT COUNT(*) FROM jobs WHERE created>=?", (since,))[0][0])
+
     def delete(self, job_id: str) -> None:
         self._exec("DELETE FROM job_log WHERE job_id=?", (job_id,))
         self._exec("DELETE FROM jobs WHERE id=?", (job_id,))

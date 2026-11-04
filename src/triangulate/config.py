@@ -59,8 +59,8 @@ class Settings(BaseSettings):
     basemap_enabled: bool = True
     basemap_url: str = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
     max_upload_bytes: int = 2_000_000_000
-    retention_days: int = 7
-    max_jobs_per_day: int = 20
+    retention_days: int = 7  # job workspaces/uploads older than this are purged; 0 disables (WP24)
+    max_jobs_per_day: int = 20  # new jobs (upload or rerun) per rolling 24 h; 0 disables (WP24)
 
     # Physics / search defaults
     speed_of_sound: float = 343.0
