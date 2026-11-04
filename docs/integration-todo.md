@@ -30,6 +30,21 @@ Written by the real stages into `data/jobs/<id>/`, served via `/api/jobs/{id}/ar
 - [x] WP10 silence scope: single-event jobs use `scope="full", exempt="aircraft"`; multi-event jobs use the default "between". Revisit "full" for multi-event once `exempt_events` is validated (WP22/23).
 - WP10 real data: implied audio.mp3 start = 20:17:34.5Z (confirms the WP07 estimate).
 
+## WP22 calibration findings
+- lambda fitted to 0.774 (`acoustic/calibration_defaults.py`). 90 % HPD coverage is 0.925.
+- [ ] Top-1 within 100 m is 0.85 against the 0.90 target (median 28 m). The misses are in the acoustic argmax, not in lambda.
+  - [ ] WP03: interpolate sparse ADS-B tracks using gs/track (exact 1 s tracks fix 2 of 4 probed misses).
+  - [ ] WP08: the slant distance d is under-estimated (0.6–0.8×) on turning tracks (up to 1.2°/s), so the truth falls outside the CPA distance gate. Synthetic heard flights are limited to ≤ 0.4°/s for now.
+  - [ ] WP11: after refinement the best hypothesis can still be a 200 m cell.
+- [ ] Single-event mode is overconfident at the fitted lambda: the fused 90 % HPD covers the truth in only 3/5 seeds.
+- The MP3 32k synthetic test is weak: the codec is nearly transparent below 1 kHz.
+
+## WP23 acceptance (Oyster Bay, `tests/e2e/test_acceptance_oyster_bay.py`)
+- A1 PASS: best 157 m, truth at rank 1. A2 PASS: 141 m, margin z 21.8. A3 PASS: T_s* 20:17:29.7Z (+106 s vs the notes' anchor, −2 s vs 20:17:32Z).
+- [ ] A4 (report-only) FAIL: single event at 1276 s. Top-1 is a069fe, 36 km off. The plan's known clip time of 20:37Z ±90 s probably excludes the true clip time (true start + 1276 s ≈ 20:38:48Z). Re-run with 20:38:48 ±90 s before tuning the single-event path.
+- A5 (full-day, `TRIANGULATE_ACCEPT_A5=1`) has not been run.
+- Fixture: `scripts/build_acceptance_fixture.py` → `data/cache/fixtures/adsb_2026-09-08_LI_1930-2300.parquet` (+ manifest).
+
 ## Unverified
 - [ ] WP15 has never called the real Claude API (no key). Run the `llm`-marked test once `ANTHROPIC_API_KEY` is set. The visual-layer and sun-rerank branches of the fusion stage are untested end to end for the same reason.
 - [ ] WP21 JS has not been exercised in a real browser (WP25 only checked the artifacts over HTTP).
