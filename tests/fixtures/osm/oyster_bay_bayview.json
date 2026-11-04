@@ -1,0 +1,137 @@
+[
+ {
+  "method": "GET",
+  "url": "https://nominatim.openstreetmap.org/search?q=Bayview+Avenue%2C+Oyster+Bay&format=jsonv2&limit=5&addressdetails=0&viewbox=-73.580000%2C40.920000%2C-73.460000%2C40.840000&bounded=1&accept-language=en&polygon_geojson=1&polygon_threshold=0.001",
+  "body": null,
+  "status": 200,
+  "json": [
+   {
+    "place_id": 359576355,
+    "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 443050668,
+    "lat": "40.9028644",
+    "lon": "-73.5618613",
+    "category": "highway",
+    "type": "residential",
+    "place_rank": 26,
+    "importance": 0.05339634317540242,
+    "addresstype": "residential",
+    "name": "Bayview Avenue",
+    "display_name": "Bayview Avenue, Village of Bayville, Town of Oyster Bay, Nassau County, New York, 11709, United States",
+    "boundingbox": [
+     "40.9027350",
+     "40.9029978",
+     "-73.5628931",
+     "-73.5608290"
+    ],
+    "geojson": {
+     "type": "LineString",
+     "coordinates": [
+      [
+       -73.5628931,
+       40.9029978
+      ],
+      [
+       -73.560829,
+       40.902735
+      ]
+     ]
+    }
+   },
+   {
+    "place_id": 359408580,
+    "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 24122058,
+    "lat": "40.8758770",
+    "lon": "-73.5269864",
+    "category": "highway",
+    "type": "unclassified",
+    "place_rank": 26,
+    "importance": 0.05338641107804986,
+    "addresstype": "unclassified",
+    "name": "Bayview Avenue",
+    "display_name": "Bayview Avenue, Oyster Bay, Town of Oyster Bay, Nassau County, New York, 11771, United States",
+    "boundingbox": [
+     "40.8753181",
+     "40.8764261",
+     "-73.5278772",
+     "-73.5260895"
+    ],
+    "geojson": {
+     "type": "LineString",
+     "coordinates": [
+      [
+       -73.5278772,
+       40.8753181
+      ],
+      [
+       -73.5260895,
+       40.8764261
+      ]
+     ]
+    }
+   },
+   {
+    "place_id": 359544609,
+    "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 654866014,
+    "lat": "40.9026228",
+    "lon": "-73.5599968",
+    "category": "highway",
+    "type": "path",
+    "place_rank": 27,
+    "importance": 0.04006300984206911,
+    "addresstype": "road",
+    "name": "Bayview Avenue",
+    "display_name": "Bayview Avenue, Village of Bayville, Town of Oyster Bay, Nassau County, New York, 11709, United States",
+    "boundingbox": [
+     "40.9025830",
+     "40.9027080",
+     "-73.5603190",
+     "-73.5596695"
+    ],
+    "geojson": {
+     "type": "LineString",
+     "coordinates": [
+      [
+       -73.560319,
+       40.902708
+      ],
+      [
+       -73.5596695,
+       40.9026
+      ]
+     ]
+    }
+   }
+  ]
+ },
+ {
+  "method": "POST",
+  "url": "https://overpass-api.de/api/interpreter",
+  "body": "[out:json][timeout:25][maxsize:67108864];\nnwr[\"highway\"][\"name\"=\"Bayview Avenue\"](40.840000,-73.580000,40.920000,-73.460000);\nout center tags 200;",
+  "status": 200,
+  "synthetic": true,
+  "json": {
+   "version": 0.6,
+   "generator": "Overpass API (synthetic fixture)",
+   "elements": [
+    {
+     "type": "way",
+     "id": 1000001,
+     "center": {
+      "lat": 40.875877,
+      "lon": -73.5269864
+     },
+     "tags": {
+      "highway": "residential",
+      "name": "Bayview Avenue"
+     }
+    }
+   ]
+  }
+ }
+]
