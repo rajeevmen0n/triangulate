@@ -1,0 +1,20 @@
+.devhome/
+watch-runs/
+result
+.direnv/
+__pycache__/
+node_modules/
+.venv/
+.env
+data/
+*.parquet
+!tests/fixtures/**/*.parquet
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.pyc
+
+# Downloaded media fixtures (copyrighted, large) — kept local only
+/video.mp4
+/audio.mp3
+/sub.srt

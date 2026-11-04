@@ -1,0 +1,26 @@
+# Tool configuration only. Dependencies come from flake.nix (nixpkgs python env);
+# nothing is pip-installed. The package is found via PYTHONPATH=$PROJECT_ROOT/src.
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+asyncio_mode = "auto"
+markers = [
+  "network: needs internet access",
+  "slow: long-running",
+  "acceptance: Oyster Bay acceptance tests",
+  "llm: needs ANTHROPIC_API_KEY (skipped without a key)",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+mypy_path = "src"
+ignore_missing_imports = true
+check_untyped_defs = true
