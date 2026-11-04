@@ -39,7 +39,9 @@ def _cmd_run(args: argparse.Namespace) -> int:
 
     from .jobs.pipeline import JobParams
     from .jobs.runner import create_job, make_store, run_job
+    from .jobs.stages import register_real_stages
 
+    register_real_stages()
     path = Path(args.file)
     if not path.is_file():
         print(f"error: no such file: {path}", file=sys.stderr)
@@ -54,7 +56,8 @@ def _cmd_run(args: argparse.Namespace) -> int:
         if isinstance(events, dict):
             events = events.get("events", [])
         params = JobParams(
-            constraints=cons, visual=args.visual, visual_consent=args.visual, events=events
+            constraints=cons, visual=args.visual, visual_consent=args.visual, events=events,
+            use_metadata=not args.no_metadata, trust_gps=args.trust_gps,
         )
     except (ValueError, ValidationError, OSError) as e:
         print(f"error: invalid arguments: {e}", file=sys.stderr)
@@ -105,7 +108,9 @@ def _cmd_serve(args: argparse.Namespace) -> int:
     import uvicorn
 
     from .api import create_app
+    from .jobs.stages import register_real_stages
 
+    register_real_stages()
     s = get_settings()
     host, port = args.host or s.host, args.port or s.port
     if host not in ("127.0.0.1", "localhost", "::1"):
@@ -131,6 +136,8 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--tz", help="IANA timezone")
     run.add_argument("--visual", action="store_true", help="opt in to the Claude visual module")
     run.add_argument("--quiet", action="store_true", help="no progress on stderr")
+    run.add_argument("--no-metadata", action="store_true", help="do not read container metadata")
+    run.add_argument("--trust-gps", action="store_true", help="pin the file's GPS (if any) as candidate #0")
     run.add_argument("--events", help="events.json to use instead of auto-detection")
     run.set_defaults(func=_cmd_run)
 

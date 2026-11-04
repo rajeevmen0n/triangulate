@@ -24,7 +24,9 @@ export async function renderResults(root, job, state, onRerun) {
   const nSel = (await getJson(id, "events.json"));
   const evList = Array.isArray(nSel) ? nSel : nSel?.events;
   if (evList && evList.filter((e) => e.selected !== false).length === 1) warns.push("Only one aircraft event was used. Single-event results are much less certain.");
-  for (const n of [...(result.notes || []), ...(gj ? [] : [])]) warns.push(String(n));
+  // results.json (triangulate.results/1) carries its own warnings; the single-event/low-margin ones are already derived above
+  for (const n of result.warnings || []) if (!/one aircraft event|Low margin/i.test(n)) warns.push(String(n));
+  const flightInfo = result.flights || {};
 
   const banner = el("div", { class: "warn", role: "note" }, el("strong", {}, "Read the region, not the pin. "),
     "Every candidate below is a probability, not a fix. The shaded areas hold 50% and 90% of the probability.",
@@ -88,7 +90,7 @@ export async function renderResults(root, job, state, onRerun) {
         el("dt", {}, "Smallest region holding it"), el("dd", {}, c.hpd_level != null ? pct(c.hpd_level) + " HPD" : "n/a"),
         el("dt", {}, "Margin over next"), el("dd", {}, c.margin_to_runner_up != null ? `${fmt(c.margin_to_runner_up, 2)} nats` : "n/a"),
         el("dt", {}, "Recording start (UTC)"), el("dd", {}, c.t_s ? String(c.t_s) : "n/a"),
-        el("dt", {}, "Flights"), el("dd", {}, c.flights?.length ? el("span", { class: "chips" }, c.flights.map((f) => el("span", { class: "chip" }, f))) : "none matched")),
+        el("dt", {}, "Flights"), el("dd", {}, c.flights?.length ? el("span", { class: "chips" }, c.flights.map((f) => el("span", { class: "chip" }, flightInfo[f]?.reg ? `${f} (${flightInfo[f].reg}${flightInfo[f].typecode ? ", " + flightInfo[f].typecode : ""})` : f))) : "none matched")),
       contribs.length ? el("table", {}, el("caption", { class: "small muted", style: "text-align:left" }, "Evidence by module (weighted log-likelihood)"),
         el("tbody", {}, contribs.map(([k, v]) => el("tr", {}, el("td", {}, k), el("td", { class: "r num" }, fmt(v, 2)))))) : null,
       c.notes?.length ? el("ul", {}, c.notes.map((n) => el("li", {}, String(n)))) : null);
@@ -103,14 +105,20 @@ export async function renderResults(root, job, state, onRerun) {
   const extras = [];
   if (result.module_status) extras.push(el("p", { class: "small" }, "Modules: ", Object.entries(result.module_status).map(([k, v]) => `${k} ${v}`).join("; ")));
   const meta = result.metadata || (has("metadata.json") ? await getJson(id, "metadata.json") : null);
-  if (meta && !meta.stub) {
-    const hints = Array.isArray(meta.hints) ? meta.hints : Object.entries(meta).map(([k, v]) => ({ key: k, value: v }));
+  if (meta && !meta.stub && !meta.skipped) {
+    // WP13 MetadataReport: gps[], times[], make/model/encoder, reencode_markers
+    const hints = Array.isArray(meta.hints) ? meta.hints : [
+      ...(meta.gps || []).map((g) => ({ key: `GPS (${g.source})`, value: `${coordText(g.lat, g.lon)}${g.accuracy_m ? ` ±${fmtDist(g.accuracy_m)}` : ""}` })),
+      ...(meta.times || []).map((t) => ({ key: `Time (${t.field})`, value: `${t.naive}${t.offset_min != null ? ` offset ${t.offset_min} min` : " (no time zone)"}` })),
+      ...["make", "model", "encoder"].filter((k) => meta[k]).map((k) => ({ key: k, value: meta[k] })),
+      ...((meta.reencode_markers || []).length ? [{ key: "re-encode markers", value: meta.reencode_markers.join(", ") }] : []),
+    ];
     extras.push(el("div", { class: "card" }, el("h3", {}, "Metadata hints ", el("span", { class: "badge untrusted" }, "untrusted")),
       el("p", { class: "small muted" }, "Embedded file metadata can be wrong or forged. It is never treated as proof."),
       el("dl", { class: "kv" }, hints.slice(0, 40).flatMap((h) => [el("dt", {}, String(h.key ?? h.name ?? "hint")), el("dd", {}, typeof (h.value ?? h) === "object" ? JSON.stringify(h.value ?? h) : String(h.value ?? h))]))));
   }
   const clues = result.clues || result.visual?.clues || (has("clues.json") ? await getJson(id, "clues.json") : null);
-  const clueList = Array.isArray(clues) ? clues : clues?.clues;
+  const clueList = Array.isArray(clues) ? clues : (clues?.clues || clues?.report?.clues);
   if (clueList?.length) {
     extras.push(el("div", { class: "card" }, el("h3", {}, "Visual clues"), el("p", { class: "small muted" }, "Read by a language model from sampled frames. Treat each as a lead to verify."),
       clueList.map((c) => {

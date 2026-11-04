@@ -62,6 +62,8 @@ class JobParams(BaseModel):
         default_factory=lambda: {"acoustic": 1.0, "visual": 0.5, "metadata": 1.0}
     )
     llm_budget_usd: float | None = None  # None -> settings.llm_budget_usd (default $2 hard cap)
+    use_metadata: bool = True  # read container metadata (untrusted hints); False for fixtures like audio.mp3
+    trust_gps: bool = False  # user trusts the file's GPS: it becomes pinned candidate #0 (plan 3.5)
     input_name: str = "input"
 
 

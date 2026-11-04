@@ -112,6 +112,7 @@ def test_visual_skipped_without_consent_or_key(env):
 
 
 def test_cli_run_summary(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr("triangulate.jobs.stages.register_real_stages", lambda: None)  # keep the WP18 stubs
     monkeypatch.setenv("TRIANGULATE_DATA", str(tmp_path / "d"))
     from triangulate.config import reload_settings
     reload_settings()
