@@ -26,7 +26,7 @@ Everything runs inside the Nix dev shell (Python env from nixpkgs; no pip/uv, no
 The shell keeps HOME/XDG/TMPDIR inside `.devhome/`.
 
 ```sh
-cd /home/rajeev/work/repos/triangulate
+cd triangulate                                # repository root
 nix develop                                   # interactive shell (or `direnv allow`)
 nix develop --command pytest -q               # run tests
 nix develop --command pytest -m "not network and not slow and not llm"

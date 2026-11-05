@@ -545,7 +545,7 @@ triangulate/
 ## 5. Work packages
 
 Rules for every package:
-- Run everything via `cd /home/rajeev/work/repos/triangulate && nix develop --command …`.
+- Run everything via `nix develop --command …` from the repository root.
 - No sudo, no global installs.
 - Never modify `video.mp4`, `sub.srt`, `audio.mp3` or `docs/video-notes.md`.
 - Never read metadata from `video.mp4` or `audio.mp3`.

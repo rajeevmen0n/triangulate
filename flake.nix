@@ -47,10 +47,11 @@
               export TESSDATA_PREFIX="${pkgs.tesseract}/share/tessdata"
               # .env is deliberately NOT sourced here; the app loads it itself.
 
+              # Dev-only defaults for the video "watch" tool (not used by the app). WATCH_SKILL_DIR is
+              # passed through from the caller's environment if set.
               export WATCH_ENGINE=local
               export WATCH_DETAIL=balanced
               export WATCH_WHISPER_BACKEND=none
-              export WATCH_SKILL_DIR=/home/rajeev/.claude/plugins/synced/24ce0485-e119-470e-8f03-afb9708098ed_b76f3290-3ce1-437e-bbdc-4dd6f15d7160/watch/skills/watch
             '';
         in {
           default = pkgs.mkShell {
