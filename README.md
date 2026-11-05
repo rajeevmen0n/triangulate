@@ -7,6 +7,19 @@ v1 is region search: a region (bbox) and a date are required. Full design: `docs
 For OSINT verification, journalism and research; not for locating private individuals.
 See `RESPONSIBLE_USE.md` for the use policy, attribution, retention (`triangulate purge`) and rate limits.
 
+## Credits
+
+The method automated here comes from the YouTube video
+[**"I discovered a sound that leaks your exact location (and it's everywhere)"**](https://www.youtube.com/watch?v=UytYrhYLOKI)
+by **colsto** ([@colsto](https://www.youtube.com/@colsto)). In that video, colsto geolocates a recording from the Doppler
+curves of propeller aircraft heard in it: the curves are matched against flight tracks over a grid of candidate points,
+using terrain elevation and filtering on aircraft that should have been heard but weren't. The demo recording was published
+separately as ["Unknown location - raw audio"](https://www.youtube.com/watch?v=4CxVxuMVkMc).
+
+colsto released no code. This project is an independent implementation built from the video, and it is not
+affiliated with or endorsed by colsto. Notes on the video are in `docs/video-notes.md`. The video and
+audio files used for development are not part of this repository.
+
 ## Dev shell and tests
 
 Everything runs inside the Nix dev shell (Python env from nixpkgs; no pip/uv, no global installs).
